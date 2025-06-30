@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  file-metadata-extractor:
+    build: .
+    container_name: file-metadata-extractor
+    ports:
+      - "5000:5000"
+    volumes:
+      - /tmp/uploads:/tmp/uploads
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - metadata-network
+
+  # Optional: Add a reverse proxy with nginx for production
+  nginx:
+    image: nginx:alpine
+    container_name: metadata-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - file-metadata-extractor
+    restart: unless-stopped
+    networks:
+      - metadata-network
+    profiles:
+      - production
+
+networks:
+  metadata-network:
+    driver: bridge 
