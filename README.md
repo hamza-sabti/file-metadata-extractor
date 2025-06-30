@@ -72,7 +72,7 @@ open http://localhost
 #### Setup
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/hamza-sabti/file-metadata-extractor.git
 cd File-Metadata-Extractor
 
 # Create virtual environment
